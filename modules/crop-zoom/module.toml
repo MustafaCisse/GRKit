@@ -1,0 +1,63 @@
+# Crop Zoom: a 35, 40, or 50 mm field of view at the full JPEG size. Each
+# recorded JPEG is the centre of the frame resampled to its whole size; the
+# DNG keeps the full sensor. The live view shows the frame of the crop.
+id = "CROPZOOM"
+version = 1
+# Before Framing (20) and HDF Glow (45), so the glow and the date apply to
+# the zoomed picture.
+order = 15
+sources = ["crop.c"]
+uses = ["CORE.ASPECT"]
+# Tile n shows value n. Tile 0 is the module tile, for Off at the root.
+tiles = [
+    "tiles/0-module.png",
+    "tiles/1-35.png",
+    "tiles/2-40.png",
+    "tiles/3-50.png",
+]
+
+# 0 Off, 1 35 mm, 2 40 mm, 3 50 mm.
+[[settings]]
+key = "FOCAL"
+values = 4
+saved = true
+public = true
+
+# Half Frame: 0 Off, 1 On. On sets the aspect to 4:3; held upright, the
+# camera then records a portrait 3:4 picture, the shape of an 18 x 24 mm
+# half-frame negative, at the focal length of FOCAL.
+[[settings]]
+key = "HALF"
+values = 2
+saved = true
+public = true
+
+# The live view outside the frame: 0 dark (black at 50%), 1 black, 2 frame
+# lines only.
+[[settings]]
+key = "MASK"
+values = 3
+saved = true
+public = true
+
+[page]
+setting = "FOCAL"
+off_row = true
+settings = ["FOCAL", "HALF", "MASK"]
+
+# After the Framing mask (10), before Guides (20).
+[[layers]]
+paint = "crop_mask"
+setting = "FOCAL"
+order = 12
+
+# Stage frame: before the date (mark), so the date is not zoomed.
+[[filters]]
+apply = "crop_apply"
+setting = "FOCAL"
+stage = "frame"
+
+# Half Frame keeps CORE.ASPECT at 4:3 while it is on.
+[events]
+handle = "crop_event"
+on = ["system_ready", "setting_changed"]

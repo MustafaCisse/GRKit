@@ -1,0 +1,13 @@
+title = "Crop Zoom"
+rows = ["Off", "35mm", "40mm", "50mm"]
+
+[settings.FOCAL]
+label = "Focal Length"
+
+[settings.HALF]
+label = "Half Frame 3:4"
+values = ["Off", "On"]
+
+[settings.MASK]
+label = "Mask"
+values = ["Dark", "Black", "Frame Lines"]
