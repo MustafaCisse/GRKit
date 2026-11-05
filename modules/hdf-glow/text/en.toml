@@ -7,3 +7,11 @@ label = "Strength"
 [settings.HALO]
 label = "CineStill Halo"
 values = ["Off", "On"]
+
+[settings.MIST]
+label = "Black Mist"
+values = ["Off", "Light", "Heavy"]
+
+[settings.STREAK]
+label = "Streak"
+values = ["Off", "Blue", "Amber"]

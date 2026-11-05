@@ -7,3 +7,11 @@ label = "강도"
 [settings.HALO]
 label = "CineStill 할레이션"
 values = ["꺼짐", "켜짐"]
+
+[settings.MIST]
+label = "블랙 미스트"
+values = ["꺼짐", "약", "강"]
+
+[settings.STREAK]
+label = "아나모픽 플레어"
+values = ["꺼짐", "블루", "앰버"]

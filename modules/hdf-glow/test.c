@@ -32,12 +32,14 @@ static PictureSet one(Plane p, u32 mono)
 
 int main(void)
 {
-    /* The descriptor: STRENGTH (4 values) and HALO (2), a page with its
-       settings rows, and one filter. */
-    assert(grkit_module.setting_count == 2 && grkit_module.settings[0].values == 4 &&
-           grkit_module.settings[1].values == 2);
+    /* The descriptor: STRENGTH (4 values), HALO (2), MIST (3) and STREAK (3),
+       a page with its settings rows, and one filter. */
+    assert(grkit_module.setting_count == 4 && grkit_module.settings[0].values == 4 &&
+           grkit_module.settings[1].values == 2 && grkit_module.settings[2].values == 3 &&
+           grkit_module.settings[3].values == 3);
     assert(grkit_module.registration_count == 2 && grkit_module.tile_count == 4);
-    assert(SETTING_STRENGTH == GRKIT_SETTING(0) && SETTING_HALO == GRKIT_SETTING(1));
+    assert(SETTING_STRENGTH == GRKIT_SETTING(0) && SETTING_HALO == GRKIT_SETTING(1) &&
+           SETTING_MIST == GRKIT_SETTING(2) && SETTING_STREAK == GRKIT_SETTING(3));
 
     /* The grids of the GR III pictures fit the scratch memory: 24 MP in cells
        of 32 pixels, the screennail in 16, the thumbnail in single pixels. */
@@ -133,6 +135,48 @@ int main(void)
         assert(hdf_grid_shift(w, h) >= 4);
         hdf_apply(&set, 2);
         assert(luma(&p, 1240, 800) > 24 && luma(&p, 5, 5) == 20);
+    }
+    /* Black Mist lifts the shadows far from the light, Heavy more than
+       Light, and keeps a grey shadow grey. */
+    {
+        u32 lift[3] = {0};
+        for (u32 m = 0; m <= 2; ++m) {
+            Plane p = scene(600, 400, 300, 200, 40, 200, 128, 128);
+            PictureSet set = one(p, 0);
+            grkit_test_settings[SETTING_MIST] = m;
+            hdf_apply(&set, 2);
+            lift[m] = luma(&p, 40, 40);
+            assert(cb_at(&p, 40, 40) == 128 && cr_at(&p, 40, 40) == 128);
+        }
+        assert(lift[0] == 20 && lift[1] > 20 && lift[2] > lift[1]);
+        grkit_test_settings[SETTING_MIST] = 0;
+    }
+
+    /* A small white light streaks sideways, not up or down; blue is blue and
+       amber is amber. */
+    {
+        Plane p = scene(1200, 400, 600, 200, 4, 255, 128, 128);
+        PictureSet set = one(p, 0);
+        grkit_test_settings[SETTING_STREAK] = 1;
+        hdf_apply(&set, 1);
+        assert(luma(&p, 700, 200) > luma(&p, 600, 300) + 4);
+        assert(cb_at(&p, 700, 200) > 130 && cr_at(&p, 700, 200) < 126);
+        p = scene(1200, 400, 600, 200, 4, 255, 128, 128);
+        set = one(p, 0);
+        grkit_test_settings[SETTING_STREAK] = 2;
+        hdf_apply(&set, 1);
+        assert(cb_at(&p, 700, 200) < 126 && cr_at(&p, 700, 200) > 130);
+        grkit_test_settings[SETTING_STREAK] = 0;
+    }
+
+    /* A wide bright area makes no streak across the picture. */
+    {
+        Plane p = scene(1200, 400, 600, 200, 150, 255, 128, 128);
+        PictureSet set = one(p, 0);
+        grkit_test_settings[SETTING_STREAK] = 1;
+        hdf_apply(&set, 1);
+        assert(cb_at(&p, 1150, 200) <= 130);
+        grkit_test_settings[SETTING_STREAK] = 0;
     }
     return 0;
 }

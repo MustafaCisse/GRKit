@@ -7,3 +7,11 @@ label = "強さ"
 [settings.HALO]
 label = "シネスティル ハレーション"
 values = ["オフ", "オン"]
+
+[settings.MIST]
+label = "ブラックミスト"
+values = ["オフ", "弱", "強"]
+
+[settings.STREAK]
+label = "アナモフィック"
+values = ["オフ", "ブルー", "アンバー"]

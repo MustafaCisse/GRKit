@@ -7,3 +7,11 @@ label = "強度"
 [settings.HALO]
 label = "CineStill 紅色光暈"
 values = ["關閉", "開啟"]
+
+[settings.MIST]
+label = "黑柔"
+values = ["關閉", "輕", "重"]
+
+[settings.STREAK]
+label = "拉絲光"
+values = ["關閉", "藍", "琥珀"]
